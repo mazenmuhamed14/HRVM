@@ -1,0 +1,93 @@
+<!-- manageDepartment.html -->
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body style="background-color: #f9fafb;">
+    
+    <div>
+        <div style="margin: 0px 10px;">
+            <div class="container" style="padding: 0px; margin-top: 30px;">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn save-btn" id="showAddDepartmentBtn" style="width: 10%;">اضافة قسم / اداره</button>
+                        
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel2">اضافة قسم / اداره</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" enctype="multipart/form-data" id="editDepartmentForm">
+                                        {% csrf_token %}
+                                        <br>
+                                        <div class="mb-3">
+                                            <label for="edit_name">اسم القسم / الاداره:</label>
+                                            <input required type="text" name="department_name" id="edit_name" class="input_profile" value="">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="manager">المدير:</label>
+                                            <select required id="manager" name="department_manager" class="form-control">
+                                                <option value="" selected disabled>اختر...</option>
+                                                {% for user in users %}
+                                                <option value="{{user.id}}" >{{user.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <hr>
+                                        <button type="submit" class="btn save-btn mt-2">اضافة</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="profile container p-3 pt-4">
+                <div class="table-responsive">
+                    <table class="table table-striped" align="center">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">اسم القسم / ادارة</th>
+                                <th scope="col">المدير المسؤل</th>
+                                <th scope="col">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for department, manager in full_join_result %}
+
+                            <tr>
+                                <th scope="row">{{department.department_id}}</th>
+                                <td>{{department.name}}</td>
+                                <td>{{manager.employee.name}}</td>
+                                <td>
+                                    <a href="{% url 'editdepartment' department.department_id %}" class="btn save-btn ms-2">تعديل</a>
+                                    {% if manager.employee.name %}
+                                    <a href="{% url 'removedepartment' department.department_id %}" class="btn save-btn ms-2">ازالة المدير</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+    <br>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var showAddDepartmentBtn = document.getElementById("showAddDepartmentBtn");
+        var showEditDepartmentBtn = document.getElementById("showEditDepartmentBtn");
+
+        showAddDepartmentBtn.addEventListener("click", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal2'));
+            myModal.show();
+        });
+
+    });
+</script>
+{% endblock content %}

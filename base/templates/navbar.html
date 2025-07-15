@@ -1,0 +1,97 @@
+<!-- Navbar.html -->
+
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light sticky-top" style="box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); background-color: white;">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}" style="display: flex;">
+            <img src="{% static 'image/NCTU-logo-1 (2).png' %}" alt="" style="width: 4rem; height: 4rem;">
+            <div style="margin-right: 10px; margin-top: -7px;">
+                <p style="margin: 0; font-weight: 900; line-height: 25px; color: #010044;">جامعة</p>
+                <p style="margin: 0; font-weight: 900; line-height: 25px; color: #010044;">القاهرة الجديدة</p>
+                <p style="margin: 0; font-weight: 900; line-height: 25px; color: #010044;">التكنولوجية</p>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'home' %}" style="font-size: 18px; font-weight: 500;">الرئيسية</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 18px; font-weight: 500;">
+                            {% if no_pending_vacations != 0 and request.user.is_superuser %}
+                            <span class="btn save-btn" style="width: 25px; height: 25px; padding: 0px;">
+                                    {{no_pending_vacations}}
+                                </span>
+                            {% endif %}
+                            الخدمات
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="direction: rtl;">
+                            <li><a class="dropdown-item" href="{% url "requestView" %}">عرض الاجازات</a></li>
+                            {% if request.user.is_superuser %}
+                                
+                                    <li><a class="dropdown-item" href="{% url "AcceptRequest" %}"><span class="btn save-btn ms-2" style="width: 25px; height: 25px; padding: 0px;">
+                                            {{no_pending_vacations}}
+                                        </span>اعتماد الاجازات</a></li>
+                                
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if request.user.department.department_id == 1 %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 18px; font-weight: 500;">
+                                تقارير
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="direction: rtl;">
+                                <li><a class="dropdown-item" href="{% url "Rdepartment" %}">تقرير عن قسم / اداره</a></li>
+                                <li><a class="dropdown-item" href="{% url "Showuser" %}">تقرير عن موظف</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url "Rday" %}">تقرير احصائي يومي</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if request.user.department.department_id == 1 and request.user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 18px; font-weight: 500;">
+                                {% if no_unactive_requests != 0 %}
+                                    <span class="btn save-btn" style="width: 25px; height: 25px; padding: 0px;">
+                                        {{no_unactive_requests}}
+                                    </span>
+                                {% endif %}
+                                التحكم
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="direction: rtl;">
+                                <li><a class="dropdown-item" href="{% url "manageDepartment" %}">ادارة الاقسام / الادارات</a></li>
+                                <li><a class="dropdown-item" href="{% url "usersRequests" %}"><span class="btn save-btn ms-2" style="width: 25px; height: 25px; padding: 0px;">{{no_unactive_requests}}</span>طلبات الانضمام</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav me-auto">
+                
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown" style="direction: ltr;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 18px; font-weight: 500;">
+                            <img src="{% static 'image/avatar.svg' %}" alt="User Profile" style="width: 30px; height: 30px; margin-left: 10px;">
+                            {{ request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="direction: rtl;">
+                            <li><a class="dropdown-item" href="{% url "user-profile" request.user.username %}">عرض المـلف الشخصي</a></li>
+                            <li><a class="dropdown-item" href="{% url "password_change" %}">تغيير كلمه المرور</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url "logout" %}">تسجيل الخروج</a></li>
+                        </ul>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="btn save-btn" href="{% url 'logout' %}" style="font-size: 15px; width: 10%; margin-top: 5px;">تسجيل خروج</a>
+                    </li> -->
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
